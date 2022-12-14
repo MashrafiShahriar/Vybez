@@ -129,7 +129,8 @@ export const sendPasswordReset = (email) => {
 
 export const deletePlaylist = (pid) =>{
 
-    getDoc(doc(db, "atrists", artist.uid)).then((f)=>{
+    getDoc(doc(db, "artists", artist.uid)).then((f)=>{
+      console.log(f)
         let playlists = f.data().playlists
         playlists.splice(playlists.indexOf(pid),1)
         updateDoc(doc(db, "artists", artist.uid),{
