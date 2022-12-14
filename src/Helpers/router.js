@@ -1,6 +1,6 @@
 import { Result } from 'antd';
 import { onAuthStateChanged } from 'firebase/auth';
-import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { root } from '..';
 import Home from '../Page/home';
@@ -64,6 +64,7 @@ PA.splice(0,1)
 const HomeF = ()=>{
 
     getDoc(doc(db, "artists", artist.uid)).then((f)=>{
+  
         let pll = f.data().playlists
 
         if(f.data().playlists.length > 0){

@@ -1,7 +1,7 @@
 import { message } from "antd";
 import { initializeApp } from "firebase/app";
 import { createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
-import { doc, setDoc, getFirestore, deleteDoc, getDoc, updateDoc } from "firebase/firestore"; 
+import { doc, setDoc, getFirestore, deleteDoc, getDoc, updateDoc, addDoc } from "firebase/firestore"; 
 import {deleteObject, getStorage, ref} from 'firebase/storage'
 import { artist, playlists } from "./router";
 
@@ -56,7 +56,6 @@ export const logout = ()=>{
       }).catch(() => {
       });    
 }
-
 export const loginWithEmailAndPassword = (email, password) => {
 signInWithEmailAndPassword(auth, email, password)
 .then(() => {
@@ -71,14 +70,41 @@ signInWithEmailAndPassword(auth, email, password)
 
 });
 }
-
+// logout()
 export const socialSignInWithGoogle = () => {
     signInWithPopup(auth, provider)
-    .then((result) => {
-        window.location = "home"
-        message.success("Logged in")
+    .then((user) => {
+      user = user.user
+      getDoc(doc(db, "artists", user.uid)).then((c)=>{
+
+        if(c.exists()){
+          console.log("b")
+
+          window.location = "home"
+          message.success("Logged in")
+        }else{
+
+        console.log("c")
+
+          setDoc(doc(db, "artists", user.uid),  
+          {image: user.photoURL,
+              name: user.displayName,
+              musics: [],
+              playlists:[],
+              like: 0,
+              listen:0,
+              totalPlayed:0}).then(()=>{
+                window.location = "home"
+                message.success("Logged in")
+              }).catch((err)=>{
+                console.log(err.errorCode)
+              })
+        }
+      })
+ 
     }).catch((error) => {
       const errorCode = error.code;
+      console.log(error)
       message.error(errorCode)
 
     });
